@@ -47,6 +47,7 @@ public class DelegateConsistencyServiceImpl implements ConsistencyService {
     
     @Override
     public void put(String key, Record value) throws NacosException {
+        // ephemeralConsistencyService
         mapConsistencyService(key).put(key, value);
     }
     

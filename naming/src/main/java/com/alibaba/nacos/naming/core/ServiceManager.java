@@ -500,7 +500,7 @@ public class ServiceManager implements RecordListener<Service> {
      * @throws Exception any error occurred in the process
      */
     public void registerInstance(String namespaceId, String serviceName, Instance instance) throws NacosException {
-        
+        // 创建一个空的 service,并将 service put 到 serviceMap 中
         createEmptyService(namespaceId, serviceName, instance.isEphemeral());
         
         Service service = getService(namespaceId, serviceName);
@@ -644,7 +644,7 @@ public class ServiceManager implements RecordListener<Service> {
      */
     public void addInstance(String namespaceId, String serviceName, boolean ephemeral, Instance... ips)
             throws NacosException {
-        
+        // 创建一个实例对应的 key
         String key = KeyBuilder.buildInstanceListKey(namespaceId, serviceName, ephemeral);
         
         Service service = getService(namespaceId, serviceName);
@@ -654,7 +654,7 @@ public class ServiceManager implements RecordListener<Service> {
             
             Instances instances = new Instances();
             instances.setInstanceList(instanceList);
-            
+            // consistencyDelegate
             consistencyService.put(key, instances);
         }
     }
