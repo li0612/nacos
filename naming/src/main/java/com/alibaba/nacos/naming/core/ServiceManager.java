@@ -80,7 +80,14 @@ import static com.alibaba.nacos.naming.misc.UtilsAndCommons.UPDATE_INSTANCE_META
  */
 @Component
 public class ServiceManager implements RecordListener<Service> {
-    
+    /***
+     * 实体 pojo
+     *
+     * 1. ServiceManager.serviceMap 保存服务 双层 map
+     * 2. Service 服务
+     * 3. Cluster 集群  Set<Instance> instances
+     * 4. Instance 实例
+     * */
     /**
      * Map(namespace, Map(group::serviceName, Service)).
      */
@@ -488,7 +495,7 @@ public class ServiceManager implements RecordListener<Service> {
             }
         }
     }
-    
+
     /**
      * Register an instance to a service in AP mode.
      *
@@ -500,6 +507,7 @@ public class ServiceManager implements RecordListener<Service> {
      * @throws Exception any error occurred in the process
      */
     public void registerInstance(String namespaceId, String serviceName, Instance instance) throws NacosException {
+
         // 创建一个空的 service,并将 service put 到 serviceMap 中
         createEmptyService(namespaceId, serviceName, instance.isEphemeral());
         
