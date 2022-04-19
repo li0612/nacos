@@ -93,6 +93,10 @@ public class ServiceManager implements RecordListener<Service> {
      */
     private final Map<String, Map<String, Service>> serviceMap = new ConcurrentHashMap<>();
 
+    public Map<String, Map<String, Service>> getServiceMap() {
+        return this.serviceMap;
+    }
+
     private final LinkedBlockingDeque<ServiceKey> toBeUpdatedServicesQueue = new LinkedBlockingDeque<>(1024 * 1024);
 
     private final Synchronizer synchronizer = new ServiceStatusSynchronizer();
@@ -476,6 +480,7 @@ public class ServiceManager implements RecordListener<Service> {
         if (service == null) {
 
             Loggers.SRV_LOG.info("creating empty service {}:{}", namespaceId, serviceName);
+            // 如果 map 中没有该服务，new
             service = new Service();
             service.setName(serviceName);
             service.setNamespaceId(namespaceId);
@@ -508,7 +513,7 @@ public class ServiceManager implements RecordListener<Service> {
      */
     public void registerInstance(String namespaceId, String serviceName, Instance instance) throws NacosException {
 
-        // 创建一个空的 service,并将 service put 到 serviceMap 中
+        // 当服务不存在时，创建一个空的服务,并将服务 put 到 serviceMap 中，serviceMap 就是存储服务信息的注册表
         createEmptyService(namespaceId, serviceName, instance.isEphemeral());
 
         Service service = getService(namespaceId, serviceName);
@@ -658,6 +663,7 @@ public class ServiceManager implements RecordListener<Service> {
         Service service = getService(namespaceId, serviceName);
 
         synchronized (service) {
+            // 获取当前服务注册的所有实例列表
             List<Instance> instanceList = addIpAddresses(service, ephemeral, ips);
 
             Instances instances = new Instances();
@@ -890,9 +896,16 @@ public class ServiceManager implements RecordListener<Service> {
     }
 
     private void putServiceAndInit(Service service) throws NacosException {
+        // 将服务添加到 map 中
         putService(service);
         service = getService(service.getNamespaceId(), service.getName());
+        /**
+         * todo liyan 健康检查
+         *
+         * 处理与客户端的健康检查
+         */
         service.init();
+        // 集群之间一致性的处理
         consistencyService
                 .listen(KeyBuilder.buildInstanceListKey(service.getNamespaceId(), service.getName(), true), service);
         consistencyService

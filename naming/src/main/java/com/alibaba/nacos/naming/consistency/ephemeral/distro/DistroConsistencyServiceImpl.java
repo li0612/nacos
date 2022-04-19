@@ -34,6 +34,7 @@ import com.alibaba.nacos.core.distributed.distro.entity.DistroKey;
 import com.alibaba.nacos.naming.core.DistroMapper;
 import com.alibaba.nacos.naming.core.Instances;
 import com.alibaba.nacos.naming.core.Service;
+import com.alibaba.nacos.naming.core.ServiceManager;
 import com.alibaba.nacos.naming.misc.GlobalConfig;
 import com.alibaba.nacos.naming.misc.GlobalExecutor;
 import com.alibaba.nacos.naming.misc.Loggers;
@@ -41,6 +42,7 @@ import com.alibaba.nacos.naming.misc.SwitchDomain;
 import com.alibaba.nacos.naming.pojo.Record;
 import org.apache.commons.lang3.StringUtils;
 import org.javatuples.Pair;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.DependsOn;
 
 import javax.annotation.PostConstruct;
@@ -128,6 +130,8 @@ public class DistroConsistencyServiceImpl implements EphemeralConsistencyService
      * @param key   key of record
      * @param value record
      */
+
+
     public void onPut(String key, Record value) {
 
         if (KeyBuilder.matchEphemeralInstanceListKey(key)) {
